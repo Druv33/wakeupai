@@ -55,8 +55,8 @@ const Disclaimer = () => (
           <h2 className="text-lg font-bold text-foreground">Contact</h2>
           <p>
             If you have questions about this Disclaimer, contact us at{" "}
-            <a href="mailto:hello@wakeupai.in" className="text-foreground underline underline-offset-4">
-              hello@wakeupai.in
+            <a href="mailto:dhruvxrana@gmail.com" className="text-foreground underline underline-offset-4">
+              dhruvxrana@gmail.com
             </a>
             .
           </p>

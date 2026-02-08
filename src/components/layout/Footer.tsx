@@ -27,7 +27,7 @@ export const Footer = () => (
             <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               About
             </Link>
-            <a href="mailto:hello@wakeupai.in" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <a href="mailto:dhruvxrana@gmail.com" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Contact
             </a>
           </nav>

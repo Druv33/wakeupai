@@ -62,8 +62,8 @@ const Terms = () => (
           <h2 className="text-lg font-bold text-foreground">Contact</h2>
           <p>
             For questions about these Terms, contact us at{" "}
-            <a href="mailto:hello@wakeupai.in" className="text-foreground underline underline-offset-4">
-              hello@wakeupai.in
+            <a href="mailto:dhruvxrana@gmail.com" className="text-foreground underline underline-offset-4">
+              dhruvxrana@gmail.com
             </a>
             .
           </p>

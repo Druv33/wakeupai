@@ -86,14 +86,14 @@ export const DropdownSelector = ({
       )}
 
       {isOpen && (
-        <div className="absolute left-0 right-0 z-50 mt-1 top-[calc(100%-1.5rem)]">
+        <div className="absolute left-0 right-0 z-50 mt-1" style={{ top: "calc(100% - 1.5rem)" }}>
           <div
             ref={listRef}
             role="listbox"
             className={cn(
-              "w-full max-h-[240px] overflow-y-auto overscroll-contain",
+              "w-full max-h-[200px] overflow-y-auto overscroll-contain",
               "rounded-xl border border-border/40",
-              "bg-popover shadow-lg shadow-black/10",
+              "bg-popover text-popover-foreground shadow-lg shadow-black/10",
               "py-1.5 animate-fade-in"
             )}
           >

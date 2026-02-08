@@ -3,7 +3,7 @@ import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FadeIn } from "./FadeIn";
 
-const ROTATING_WORDS = ["Video", "Image"];
+const ROTATING_WORDS = ["Videos", "Images"];
 
 const TypewriterWord = () => {
   const [wordIndex, setWordIndex] = useState(0);
@@ -15,10 +15,8 @@ const TypewriterWord = () => {
     let timeout: ReturnType<typeof setTimeout>;
 
     if (!isDeleting && displayText === currentWord) {
-      // Pause before deleting
       timeout = setTimeout(() => setIsDeleting(true), 2000);
     } else if (isDeleting && displayText === "") {
-      // Move to next word
       setIsDeleting(false);
       setWordIndex((prev) => (prev + 1) % ROTATING_WORDS.length);
     } else if (isDeleting) {
@@ -35,7 +33,7 @@ const TypewriterWord = () => {
   }, [displayText, isDeleting, wordIndex]);
 
   return (
-    <span className="inline-block min-w-[3ch]">
+    <span className="inline-block min-w-[5ch]">
       {displayText}
       <span className="animate-blink text-muted-foreground">|</span>
     </span>
@@ -56,7 +54,7 @@ export const HeroSection = () => {
       </FadeIn>
       <FadeIn delay={100}>
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tighter leading-[0.9] max-w-4xl">
-          AI <TypewriterWord /> Scene Generator for Cinematic Faceless Videos
+          AI Video Scene Generator for Cinematic Faceless <TypewriterWord />
         </h1>
       </FadeIn>
       <FadeIn delay={200}>

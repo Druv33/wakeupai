@@ -31,6 +31,7 @@ export const useSceneGenerator = () => {
   const [camera, setCamera] = useState("Wide");
   const [lighting, setLighting] = useState("Natural");
   const [platform, setPlatform] = useState("YouTube Shorts");
+  const [imageSize, setImageSize] = useState("1024x1024 (Square)");
   const [result, setResult] = useState<SceneResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +57,7 @@ export const useSceneGenerator = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${supabaseKey}`,
         },
-        body: JSON.stringify({ sceneIdea, style, emotion, camera, lighting, platform }),
+        body: JSON.stringify({ sceneIdea, style, emotion, camera, lighting, platform, imageSize }),
       });
 
       if (response.status === 429) {
@@ -88,6 +89,7 @@ export const useSceneGenerator = () => {
     setCamera("Wide");
     setLighting("Natural");
     setPlatform("YouTube Shorts");
+    setImageSize("1024x1024 (Square)");
     setResult(null);
     setError(null);
   };
@@ -108,6 +110,7 @@ export const useSceneGenerator = () => {
     camera, setCamera,
     lighting, setLighting,
     platform, setPlatform,
+    imageSize, setImageSize,
     result, isLoading, error,
     generate, reset, copyToClipboard,
   };

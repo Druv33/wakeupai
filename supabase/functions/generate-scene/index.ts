@@ -34,8 +34,10 @@ Guidelines:
 - Write prompts in present tense, descriptive, visual language
 - Include specific camera movements, lighting details, and atmospheric elements
 - The cinematic prompt should be 3-5 sentences of rich visual description
-- Each storyboard shot should describe a specific moment with camera and lighting details
+- Each storyboard shot should describe a specific moment with camera angle, movement, emotion/intensity, and suggested duration
 - The image prompt should be optimized for AI image generators (Midjourney, DALL-E style)
+- The negative prompt should list things to AVOID for best AI image quality (e.g., blurry, low quality, deformed, etc.)
+- Platform optimization should include best-for usage, aspect ratio, and style consistency tips
 - Match the selected cinematic style, emotion, camera type, lighting, and platform
 - For short-form platforms (YouTube Shorts, TikTok, Reels), keep shots punchy and dynamic
 - For Film, allow more contemplative pacing and longer compositions`;
@@ -66,36 +68,51 @@ Generate a professional cinematic scene based on these parameters.`;
             type: "function",
             function: {
               name: "generate_scene",
-              description: "Generate a structured cinematic scene with prompt, storyboard, and image prompt.",
+              description: "Generate a structured cinematic scene with prompt, storyboard, image prompt, negative prompt, and platform optimization.",
               parameters: {
                 type: "object",
                 properties: {
                   cinematicPrompt: {
                     type: "string",
-                    description: "A detailed 3-5 sentence cinematic prompt optimized for AI video generation. Rich with visual, lighting, camera, and atmospheric details.",
+                    description: "A detailed 3-5 sentence cinematic prompt optimized for AI video generation.",
                   },
                   storyboard: {
                     type: "array",
                     items: {
                       type: "object",
                       properties: {
-                        shot: { type: "number", description: "Shot number (1, 2, or 3)" },
-                        description: {
-                          type: "string",
-                          description: "Detailed shot description including camera angle, movement, lighting, and action.",
-                        },
+                        shot: { type: "number", description: "Shot number" },
+                        shotType: { type: "string", description: "Type of shot (e.g., Wide, Close-up, Medium)" },
+                        cameraMovement: { type: "string", description: "Camera movement (e.g., Slow pan left, Static, Dolly in)" },
+                        emotion: { type: "string", description: "Emotion/intensity of the shot" },
+                        duration: { type: "string", description: "Suggested duration (e.g., 2-3s)" },
+                        description: { type: "string", description: "Detailed shot description." },
                       },
-                      required: ["shot", "description"],
+                      required: ["shot", "shotType", "cameraMovement", "emotion", "duration", "description"],
                       additionalProperties: false,
                     },
-                    description: "A 3-shot storyboard breakdown of the scene.",
+                    description: "A 3-4 shot storyboard breakdown.",
                   },
                   imagePrompt: {
                     type: "string",
-                    description: "An optimized prompt for AI image generation (Midjourney/DALL-E style) that captures the key visual moment of the scene.",
+                    description: "Optimized, clean, AI-ready prompt for image generation.",
+                  },
+                  negativePrompt: {
+                    type: "string",
+                    description: "Things to avoid for best AI image quality. E.g.: blurry, low quality, deformed hands, extra fingers, watermark, text, logo, bad anatomy, cropped, worst quality, jpeg artifacts, duplicate.",
+                  },
+                  platformOptimization: {
+                    type: "object",
+                    properties: {
+                      bestFor: { type: "string", description: "Best platform usage (e.g., YouTube Shorts, Thumbnail, Poster)" },
+                      aspectRatio: { type: "string", description: "Recommended aspect ratio (e.g., 9:16, 16:9, 1:1)" },
+                      styleConsistencyTips: { type: "string", description: "Tips for maintaining visual style consistency across content." },
+                    },
+                    required: ["bestFor", "aspectRatio", "styleConsistencyTips"],
+                    additionalProperties: false,
                   },
                 },
-                required: ["cinematicPrompt", "storyboard", "imagePrompt"],
+                required: ["cinematicPrompt", "storyboard", "imagePrompt", "negativePrompt", "platformOptimization"],
                 additionalProperties: false,
               },
             },

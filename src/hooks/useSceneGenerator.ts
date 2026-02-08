@@ -1,10 +1,27 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
+export interface StoryboardShot {
+  shot: number;
+  shotType: string;
+  cameraMovement: string;
+  emotion: string;
+  duration: string;
+  description: string;
+}
+
+export interface PlatformOptimization {
+  bestFor: string;
+  aspectRatio: string;
+  styleConsistencyTips: string;
+}
+
 export interface SceneResult {
   cinematicPrompt: string;
-  storyboard: { shot: number; description: string }[];
+  storyboard: StoryboardShot[];
   imagePrompt: string;
+  negativePrompt: string;
+  platformOptimization: PlatformOptimization;
 }
 
 export const useSceneGenerator = () => {

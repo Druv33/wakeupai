@@ -43,10 +43,10 @@ const About = () => (
           <p>
             Have questions, feedback, or partnership inquiries? Reach out to us at{" "}
             <a
-              href="mailto:hello@wakeupai.in"
+              href="mailto:dhruvxrana@gmail.com"
               className="text-foreground underline underline-offset-4 hover:text-foreground/80 transition-colors"
             >
-              hello@wakeupai.in
+              dhruvxrana@gmail.com
             </a>
           </p>
         </div>

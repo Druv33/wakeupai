@@ -6,20 +6,70 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// In-memory IP-based rate limiting
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX = 10; // max requests per window
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX;
+}
+
+// Allowed values for dropdown parameters
+const VALID_STYLES = ["Hollywood", "Indie", "Documentary", "Film Noir", "Netflix Modern", "Anime", "Horror", "Sci-Fi", "Fantasy", "Vintage"];
+const VALID_EMOTIONS = ["Intense", "Calm", "Mysterious", "Romantic", "Thrilling", "Melancholic", "Joyful", "Dark", "Hopeful", "Nostalgic"];
+const VALID_CAMERAS = ["Wide", "Close-up", "Medium", "Tracking", "Aerial", "POV", "Dutch Angle", "Over-the-Shoulder", "Bird's Eye", "Low Angle"];
+const VALID_LIGHTING = ["Natural", "Golden Hour", "Neon", "Low Key", "High Key", "Backlit", "Silhouette", "Moonlight", "Studio", "Candlelight"];
+const VALID_PLATFORMS = ["YouTube Shorts", "TikTok", "Instagram Reels", "YouTube", "Film", "Thumbnail", "Poster"];
+const VALID_IMAGE_SIZES = ["1024x1024 (Square)", "1792x1024 (Landscape 16:9)", "1024x1792 (Portrait 9:16)", "1536x1024 (Landscape 3:2)", "1024x1536 (Portrait 2:3)"];
+const MAX_SCENE_IDEA_LENGTH = 1000;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { sceneIdea, style, emotion, camera, lighting, platform } = await req.json();
+    // Rate limiting by IP
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    if (isRateLimited(ip)) {
+      return new Response(
+        JSON.stringify({ error: "Too many requests. Please wait a moment and try again." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
+    const body = await req.json();
+    const { sceneIdea, style, emotion, camera, lighting, platform, imageSize } = body;
+
+    // Validate sceneIdea
     if (!sceneIdea || typeof sceneIdea !== "string" || sceneIdea.trim().length === 0) {
       return new Response(
         JSON.stringify({ error: "Please provide a scene idea." }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+    if (sceneIdea.length > MAX_SCENE_IDEA_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Scene idea too long (max ${MAX_SCENE_IDEA_LENGTH} characters).` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate enum parameters - use defaults if invalid
+    const safeStyle = VALID_STYLES.includes(style) ? style : "Hollywood";
+    const safeEmotion = VALID_EMOTIONS.includes(emotion) ? emotion : "Intense";
+    const safeCamera = VALID_CAMERAS.includes(camera) ? camera : "Wide";
+    const safeLighting = VALID_LIGHTING.includes(lighting) ? lighting : "Natural";
+    const safePlatform = VALID_PLATFORMS.includes(platform) ? platform : "YouTube Shorts";
+    const safeImageSize = VALID_IMAGE_SIZES.includes(imageSize) ? imageSize : "1024x1024 (Square)";
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -42,12 +92,13 @@ Guidelines:
 - For short-form platforms (YouTube Shorts, TikTok, Reels), keep shots punchy and dynamic
 - For Film, allow more contemplative pacing and longer compositions`;
 
-    const userPrompt = `Scene idea: "${sceneIdea}"
-Cinematic Style: ${style}
-Emotion: ${emotion}
-Camera Type: ${camera}
-Lighting: ${lighting}
-Platform: ${platform}
+    const userPrompt = `Scene idea: "${sceneIdea.trim()}"
+Cinematic Style: ${safeStyle}
+Emotion: ${safeEmotion}
+Camera Type: ${safeCamera}
+Lighting: ${safeLighting}
+Platform: ${safePlatform}
+Image Size: ${safeImageSize}
 
 Generate a professional cinematic scene based on these parameters.`;
 
@@ -162,7 +213,7 @@ Generate a professional cinematic scene based on these parameters.`;
   } catch (e) {
     console.error("generate-scene error:", e);
     return new Response(
-      JSON.stringify({ error: e instanceof Error ? e.message : "Unknown error" }),
+      JSON.stringify({ error: "Something went wrong. Please try again." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

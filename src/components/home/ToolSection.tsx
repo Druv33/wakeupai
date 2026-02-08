@@ -37,6 +37,12 @@ const PLATFORMS = [
   "Cinematic Trailer", "Vertical Story Format", "Horizontal Cinema", "Mobile-first Video",
 ];
 
+const IMAGE_SIZES = [
+  "1024x1024 (Square)", "1920x1080 (Landscape 16:9)", "1080x1920 (Portrait 9:16)",
+  "1280x720 (HD 16:9)", "720x1280 (HD 9:16)", "1024x1792 (Tall Portrait)",
+  "1792x1024 (Wide Landscape)", "512x512 (Small Square)", "768x768 (Medium Square)",
+];
+
 const VARIANT_SUGGESTIONS = [
   "Make it darker",
   "Make it more dramatic",
@@ -89,6 +95,7 @@ export const ToolSection = () => {
     camera, setCamera,
     lighting, setLighting,
     platform, setPlatform,
+    imageSize, setImageSize,
     result, isLoading, error,
     generate, reset, copyToClipboard,
   } = useSceneGenerator();
@@ -133,9 +140,8 @@ export const ToolSection = () => {
                 <DropdownSelector label="Emotion" helperText="Controls mood, facial expression, pacing, and emotional tone" options={EMOTIONS} selected={emotion} onSelect={setEmotion} />
                 <DropdownSelector label="Camera" helperText="Camera choice affects realism and cinematic depth" options={CAMERAS} selected={camera} onSelect={setCamera} />
                 <DropdownSelector label="Lighting" helperText="Sets the visual atmosphere and shadow quality" options={LIGHTING} selected={lighting} onSelect={setLighting} />
-                <div className="sm:col-span-2">
-                  <DropdownSelector label="Platform" helperText="Optimizes framing, pacing, and aspect ratio" options={PLATFORMS} selected={platform} onSelect={setPlatform} />
-                </div>
+                <DropdownSelector label="Platform" helperText="Optimizes framing, pacing, and aspect ratio" options={PLATFORMS} selected={platform} onSelect={setPlatform} />
+                <DropdownSelector label="Image Size" helperText="Sets the output image resolution and aspect ratio" options={IMAGE_SIZES} selected={imageSize} onSelect={setImageSize} />
               </div>
             </div>
 
@@ -177,9 +183,25 @@ export const ToolSection = () => {
 
             {/* B. Storyboard */}
             <div className="rounded-xl border bg-card p-5 sm:p-6 space-y-4">
-              <div className="flex items-center gap-2">
-                <Palette className="h-5 w-5 text-primary" />
-                <h3 className="text-base sm:text-lg font-bold tracking-tight">Storyboard (Shot-by-shot)</h3>
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Palette className="h-5 w-5 text-primary" />
+                  <h3 className="text-base sm:text-lg font-bold tracking-tight">Storyboard (Shot-by-shot)</h3>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="rounded-lg gap-1 shrink-0"
+                  onClick={() => {
+                    const text = result.storyboard.map(s =>
+                      `Shot ${s.shot}: ${s.description}\nType: ${s.shotType} | Camera: ${s.cameraMovement} | Emotion: ${s.emotion} | Duration: ${s.duration}`
+                    ).join("\n\n");
+                    copyToClipboard(text, "Storyboard copied!");
+                  }}
+                >
+                  <Copy className="h-4 w-4" />
+                  <span className="text-xs">Copy</span>
+                </Button>
               </div>
               <div className="space-y-4">
                 {result.storyboard.map((shot) => (
